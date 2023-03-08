@@ -16,6 +16,8 @@ iziToast.settings({
     iconColor: '#efefef',
 });
 
+//完成
+
 //鼠标样式
 const body = document.querySelector("body");
 const element = document.getElementById("g-pointer-1");
@@ -54,7 +56,7 @@ window.addEventListener('load', function () {
             timeout: 2500,
             icon: false,
             title: hello,
-            message: '欢迎来到WayneのHome'
+            message: '欢迎来到バカのHome'
         });
     }, 800);
 
@@ -119,7 +121,8 @@ $('#hitokoto').click(function () {
 });
 
 //获取天气
-fetch('https://www.yiketianqi.com/free/day?appid=87525759&appsecret=PP6T6ikD&unescape=1')
+//fetch('https://www.yiketianqi.com/free/day?appid=87525759&appsecret=PP6T6ikD&unescape=1')
+frtch('https://www.mxnzp.com/api/weather/current/广州市?app_id=xatomqtqorksppba&app_secret=TlZieWc4YnZ3UXlxV1lUc3F2NC9zQT09')
     .then(response => response.json())
     .then(data => {
         $('#wea_text').html(data.wea)
@@ -187,6 +190,16 @@ $("#github").mouseover(function () {
 });
 $("#email").mouseover(function () {
     $("#link-text").html("来封 Email");
+}).mouseout(function () {
+    $("#link-text").html("通过这里联系我");
+});
+$("#qq").mouseover(function () {
+    $("#link-text").html("你懂的");
+}).mouseout(function () {
+    $("#link-text").html("通过这里联系我");
+});
+$("#wx").mouseover(function () {
+    $("#link-text").html("加个微信？");
 }).mouseout(function () {
     $("#link-text").html("通过这里联系我");
 });
@@ -357,7 +370,7 @@ let content = `
 版 本 号：1.2.5
 更新日期：2023-02-13
 
-主页:  https://soga.ml/
+主页:  https://wqj520.eu.org/
 Github:  https://github.com/wqjsxy
 `
 console.log(`%c${title1} %c${title2}

@@ -1,141 +1,377 @@
-let server = "netease"; //netease: 网易云音乐; tencent: QQ音乐; kugou: 酷狗音乐; xiami: 虾米; kuwo: 酷我
-let type = "playlist"; //song: 单曲; playlist: 歌单; album: 唱片
-let id = "8209251731"; //封面 ID / 单曲 ID / 歌单 ID
+//弹窗样式
+iziToast.settings({
+    timeout: 10000,
+    progressBar: false,
+    close: false,
+    closeOnEscape: true,
+    position: 'topCenter',
+    transitionIn: 'bounceInDown',
+    transitionOut: 'flipOutX',
+    displayMode: 'replace',
+    layout: '1',
+    backgroundColor: '#00000040',
+    titleColor: '#efefef',
+    messageColor: '#efefef',
+    icon: 'Fontawesome',
+    iconColor: '#efefef',
+});
 
-$.ajax({
-    url: "https://api.injahow.cn/meting/?server=" + server + "&type=" + type + "&id=" + id, //json文件位置，文件名
-    type: "GET",
-    dataType: "JSON",
-    success: function (data) {
-        const ap = new APlayer({
-            container: document.getElementById('aplayer'),
-            order: 'random',
-            preload: 'auto',
-            listMaxHeight: '336px',
-            volume: '0.5',
-            mutex: true,
-            lrcType: 3,
-            audio: data,
+//125可能有问题
+
+//鼠标样式
+const body = document.querySelector("body");
+const element = document.getElementById("g-pointer-1");
+const element2 = document.getElementById("g-pointer-2");
+const halfAlementWidth = element.offsetWidth / 2;
+const halfAlementWidth2 = element2.offsetWidth / 2;
+
+function setPosition(x, y) {
+    element2.style.transform = `translate(${x - halfAlementWidth2 + 1}px, ${y - halfAlementWidth2 + 1}px)`;
+}
+
+body.addEventListener('mousemove', (e) => {
+    window.requestAnimationFrame(function () {
+        setPosition(e.clientX, e.clientY);
+    });
+});
+
+//移动端除去鼠标样式
+switch (true) {
+    case navigator.userAgent.indexOf('Mobile') > 0:
+    $('#g-pointer-2').css("display", "none");
+}
+
+//加载完成后执行
+window.addEventListener('load', function () {
+
+    //载入动画
+    $('#loading-box').attr('class', 'loaded');
+    $('#bg').css("cssText", "transform: scale(1);filter: blur(0px);transition: ease 1.5s;");
+    $('.cover').css("cssText", "opacity: 1;transition: ease 1.5s;");
+    $('#section').css("cssText", "transform: scale(1) !important;opacity: 1 !important;filter: blur(0px) !important");
+
+    //用户欢迎
+    setTimeout(function () {
+        iziToast.show({
+            timeout: 2500,
+            icon: false,
+            title: hello,
+            message: '欢迎来到バカのHome'
         });
+    }, 800);
 
-        /* 底栏歌词 */
-        setInterval(function () {
-            $("#lrc").html("<span class='lrc-show'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='18' height='18'><path fill='none' d='M0 0h24v24H0z'/><path d='M12 13.535V3h8v3h-6v11a4 4 0 1 1-2-3.465z' fill='rgba(255,255,255,1)'/></svg>&nbsp;" + $(".aplayer-lrc-current").text() + "&nbsp;<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='18' height='18'><path fill='none' d='M0 0h24v24H0z'/><path d='M12 13.535V3h8v3h-6v11a4 4 0 1 1-2-3.465z' fill='rgba(255,255,255,1)'/></svg></span>");
-        }, 500);
+    //延迟加载音乐播放器
+    let element = document.createElement("script");
+    element.src = "./js/music.js";
+    document.body.appendChild(element);
 
-        /* 音乐通知及控制 */
-        ap.on('play', function () {
-            music = $(".aplayer-title").text() + $(".aplayer-author").text();
-            iziToast.info({
-                timeout: 4000,
-                icon: "fa-solid fa-circle-play",
-                displayMode: 'replace',
-                message: music
-            });
-            $("#play").html("<i class='fa-solid fa-pause'>");
-            $("#music-name").html($(".aplayer-title").text() + $(".aplayer-author").text());
-            if ($(document).width() >= 990) {
-                $('.power').css("cssText", "display:none");
-                $('#lrc').css("cssText", "display:block !important");
-            };
-            // Notification.requestPermission().then(res => {
-            //     console.log(res)
-            // });
-            // new Notification('音乐通知', {
-            //     body: '正在播放：' + music,
-            //     tag: 1
-            // });
-        });
+}, false)
 
-        ap.on('pause', function () {
-            $("#play").html("<i class='fa-solid fa-play'>");
-            if ($(document).width() >= 990) {
-                $('#lrc').css("cssText", "display:none !important");
-                $('.power').css("cssText", "display:block");
+setTimeout(function () {
+    $('#loading-text').html("字体及文件加载可能需要一定时间")
+}, 3000);
+
+//新春灯笼 （ 需要时取消注释 ）
+
+//new_element=document.createElement("link");
+//new_element.setAttribute("rel","stylesheet");
+//new_element.setAttribute("type","text/css");
+//new_element.setAttribute("href","./css/lantern.css");
+//document.body.appendChild(new_element);
+//
+//new_element=document.createElement("script");
+//new_element.setAttribute("type","text/javascript");
+//new_element.setAttribute("src","./js/lantern.js");
+//document.body.appendChild(new_element);
+
+
+//获取一言
+fetch('https://v1.hitokoto.cn?max_length=24')
+    .then(response => response.json())
+    .then(data => {
+        $('#hitokoto_text').html(data.hitokoto)
+        $('#from_text').html(data.from)
+    })
+    .catch(console.error)
+
+let times = 0;
+$('#hitokoto').click(function () {
+    if (times == 0) {
+        times = 1;
+        let index = setInterval(function () {
+            times--;
+            if (times == 0) {
+                clearInterval(index);
             }
+        }, 1000);
+        fetch('https://v1.hitokoto.cn?max_length=24')
+            .then(response => response.json())
+            .then(data => {
+                $('#hitokoto_text').html(data.hitokoto)
+                $('#from_text').html(data.from)
+            })
+            .catch(console.error)
+    } else {
+        iziToast.show({
+            timeout: 2000,
+            icon: "fa-solid fa-circle-exclamation",
+            message: '你点太快了吧'
         });
+    }
+});
 
-        $("#music").hover(function () {
-            $('.music-text').css("display", "none");
-            $('.music-volume').css("display", "flex");
-        }, function () {
-            $('.music-text').css("display", "block");
-            $('.music-volume').css("display", "none");
-        });
+//获取天气
+//fetch('https://www.yiketianqi.com/free/day?appid=87525759&appsecret=PP6T6ikD&unescape=1')
+frtch('https://www.mxnzp.com/api/weather/current/广州市?app_id=xatomqtqorksppba&app_secret=TlZieWc4YnZ3UXlxV1lUc3F2NC9zQT09')
+    .then(response => response.json())
+    .then(data => {
+        $('#wea_text').html(data.wea)
+        $('#city_text').html(data.city)
+        $('#tem_night').html(data.tem_night)
+        $('#tem_day').html(data.tem_day)
+        $('#win_text').html(data.win)
+        $('#win_speed').html(data.win_speed)
+    })
+    .catch(console.error)
 
-        /* 一言与音乐切换 */
-        $('#open-music').on('click', function () {
-            $('#hitokoto').css("display", "none");
-            $('#music').css("display", "flex");
-        });
+//获取时间
+let t = null;
+t = setTimeout(time, 1000);
 
-        $("#hitokoto").hover(function () {
-            $('#open-music').css("display", "flex");
-        }, function () {
-            $('#open-music').css("display", "none");
-        });
+function time() {
+    clearTimeout(t);
+    dt = new Date();
+    let y = dt.getYear() + 1900;
+    let mm = dt.getMonth() + 1;
+    let d = dt.getDate();
+    let weekday = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+    let day = dt.getDay();
+    let h = dt.getHours();
+    let m = dt.getMinutes();
+    let s = dt.getSeconds();
+    if (h < 10) {
+        h = "0" + h;
+    }
+    if (m < 10) {
+        m = "0" + m;
+    }
+    if (s < 10) {
+        s = "0" + s;
+    }
+    $("#time").html(y + "&nbsp;年&nbsp;" + mm + "&nbsp;月&nbsp;" + d + "&nbsp;日&nbsp;" + "<span class='weekday'>" + weekday[day] + "</span><br>" + "<span class='time-text'>" + h + ":" + m + ":" + s + "</span>");
+    t = setTimeout(time, 1000);
+}
 
-        $('#music-close').on('click', function () {
-            $('#music').css("display", "none");
-            $('#hitokoto').css("display", "flex");
-        });
+//链接提示文字
+$("#social").mouseover(function () {
+    $("#social").css({
+        "background": "rgb(0 0 0 / 25%)",
+        'border-radius': '6px',
+        "backdrop-filter": "blur(5px)"
+    });
+    $("#link-text").css({
+        "display": "block",
+    });
+}).mouseout(function () {
+    $("#social").css({
+        "background": "none",
+        "border-radius": "6px",
+        "backdrop-filter": "none"
+    });
+    $("#link-text").css({
+        "display": "none"
+    });
+});
 
-        /* 上下曲 */
-        $('#play').on('click', function () {
-            ap.toggle();
-            $("#music-name").html($(".aplayer-title").text() + $(".aplayer-author").text());
-        });
+$("#github").mouseover(function () {
+    $("#link-text").html("去 Github 看看");
+}).mouseout(function () {
+    $("#link-text").html("通过这里联系我");
+});
+$("#email").mouseover(function () {
+    $("#link-text").html("来封 Email");
+}).mouseout(function () {
+    $("#link-text").html("通过这里联系我");
+});
+$("#qq").mouseover(function () {
+    $("#link-text").html("你懂的");
+}).mouseout(function () {
+    $("#link-text").html("通过这里联系我");
+});
+$("#wx").mouseover(function () {
+    $("#link-text").html("加个微信？");
+}).mouseout(function () {
+    $("#link-text").html("通过这里联系我");
+});
+$("#telegram").mouseover(function () {
+    $("#link-text").html("请打电报");
+}).mouseout(function () {
+    $("#link-text").html("通过这里联系我");
+});
+$("#twitter").mouseover(function () {
+    $("#link-text").html("你懂的 ~");
+}).mouseout(function () {
+    $("#link-text").html("通过这里联系我");
+});
+$("#phone").mouseover(function () {
+    $("#link-text").html("不一定在线哦");
+}).mouseout(function () {
+    $("#link-text").html("通过这里联系我");
+});
 
-        $('#last').on('click', function () {
-            ap.skipBack();
-            ap.play();
-            $("#music-name").html($(".aplayer-title").text() + $(".aplayer-author").text());
-        });
+//更多页面切换
+let shoemore = false;
+$('#switchmore').on('click', function () {
+    shoemore = !shoemore;
+    if (shoemore && $(document).width() >= 990) {
+        $('#container').attr('class', 'container mores');
+        $("#change").html("Oops&nbsp;!");
+        $("#change1").html("哎呀，这都被你发现了（ 再点击一次可关闭 ）");
+    } else {
+        $('#container').attr('class', 'container');
+        $("#change").html("Hello&nbsp;World&nbsp;!");
+        $("#change1").html("把空间让，敞开的窗。将时间藏，露天的黄。");
+    }
+});
 
-        $('#next').on('click', function () {
-            ap.skipForward();
-            ap.play();
-            $("#music-name").html($(".aplayer-title").text() + $(".aplayer-author").text());
-        });
+//更多页面关闭按钮
+$('#close').on('click', function () {
+    $('#switchmore').click();
+});
 
-        window.onkeydown = function (e) {
-            if (e.keyCode == 32) {
-                ap.toggle();
-            }
+//移动端菜单栏切换
+let switchmenu = false;
+$('#switchmenu').on('click', function () {
+    switchmenu = !switchmenu;
+    if (switchmenu) {
+        $('#row').attr('class', 'row menus');
+        $("#menu").html("<i class='fa-solid fa-xmark'></i>");
+    } else {
+        $('#row').attr('class', 'row');
+        $("#menu").html("<i class='fa-solid fa-bars'></i>");
+    }
+});
+
+//更多弹窗页面
+$('#openmore').on('click', function () {
+    $('#box').css("display", "block");
+    $('#row').css("display", "none");
+    $('#more').css("cssText", "display:none !important");
+});
+$('#closemore').on('click', function () {
+    $('#box').css("display", "none");
+    $('#row').css("display", "flex");
+    $('#more').css("display", "flex");
+});
+
+//监听网页宽度
+window.addEventListener('load', function () {
+    window.addEventListener('resize', function () {
+        //关闭移动端样式
+        if (window.innerWidth >= 600) {
+            $('#row').attr('class', 'row');
+            $("#menu").html("<i class='fa-solid fa-bars'></i>");
+            //移除移动端切换功能区
+            $('#rightone').attr('class', 'row rightone');
         }
 
-        /* 打开音乐列表 */
-        $('#music-open').on('click', function () {
-            if ($(document).width() >= 990) {
-                $('#box').css("display", "block");
-                $('#row').css("display", "none");
-                $('#more').css("cssText", "display:none !important");
-            }
-        });
+        if (window.innerWidth <= 990) {
+            //移动端隐藏更多页面
+            $('#container').attr('class', 'container');
+            $("#change").html("Hello&nbsp;World&nbsp;!");
+            $("#change1").html("把空间让，敞开的窗。将时间藏，露天的黄。");
 
-        //音量调节
-        $("#volume").on('input propertychange touchend', function () {
-            let x = $("#volume").val();
-            ap.volume(x, true);
-            if (x == 0) {
-                $("#volume-ico").html("<i class='fa-solid fa-volume-xmark'></i>");
-            } else if (x > 0 && x <= 0.3) {
-                $("#volume-ico").html("<i class='fa-solid fa-volume-low'></i>");
-            } else if (x > 0.3 && x <= 0.6) {
-                $("#volume-ico").html("<i class='fa-solid fa-volume'></i>");
-            } else {
-                $("#volume-ico").html("<i class='fa-solid fa-volume-high'></i>");
-            }
-        });
-    },
-    error: function () {
-        setTimeout(function () {
-            iziToast.info({
-                timeout: 8000,
-                icon: "fa-solid fa-circle-exclamation",
-                displayMode: 'replace',
-                message: '音乐播放器加载失败'
-            });
-        }, 3800);
-    }
+            //移动端隐藏弹窗页面
+            $('#box').css("display", "none");
+            $('#row').css("display", "flex");
+            $('#more').css("display", "flex");
+        }
+    })
 })
+
+//移动端切换功能区
+let changemore = false;
+$('#changemore').on('click', function () {
+    changemore = !changemore;
+    if (changemore) {
+        $('#rightone').attr('class', 'row menus mobile');
+    } else {
+        $('#rightone').attr('class', 'row menus');
+    }
+});
+
+//更多页面显示关闭按钮
+$("#more").hover(function () {
+    $('#close').css("display", "block");
+}, function () {
+    $('#close').css("display", "none");
+})
+
+//屏蔽右键
+document.oncontextmenu = function () {
+    iziToast.show({
+        timeout: 2000,
+        icon: "fa-solid fa-circle-exclamation",
+        message: '为了浏览体验，本站禁用右键'
+    });
+    return false;
+}
+
+//自动变灰
+let myDate = new Date;
+let mon = myDate.getMonth() + 1;
+let date = myDate.getDate();
+let days = ['4.4', '5.12', '7.7', '9.9', '9.18', '12.13'];
+for (let day of days) {
+    let d = day.split('.');
+    if (mon == d[0] && date == d[1]) {
+        document.write(
+            '<style>html{-webkit-filter:grayscale(100%);-moz-filter:grayscale(100%);-ms-filter:grayscale(100%);-o-filter:grayscale(100%);filter:progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);_filter:none}</style>'
+        );
+        $("#change").html("Silence&nbsp;in&nbsp;silence");
+        $("#change1").html("今天是中国国家纪念日，全站已切换为黑白模式");
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                iziToast.show({
+                    timeout: 14000,
+                    icon: "fa-solid fa-clock",
+                    message: '今天是中国国家纪念日'
+                });
+            }, 3800);
+        }, false);
+    }
+}
+
+//控制台输出
+console.clear();
+let styleTitle1 = `
+font-size: 20px;
+font-weight: 600;
+color: rgb(244,167,89);
+`
+let styleTitle2 = `
+font-size:16px;
+color: rgb(244,167,89);
+`
+let styleContent = `
+color: rgb(30,152,255);
+`
+let title1 = 'WayneのHome'
+let title2 = `
+======================
+#   #    ###     #####
+#   #   #   #      #
+# # #   #   #      #
+## ##   # # #      #
+#   #    ### #   ##
+======================
+`
+let content = `
+版 本 号：1.2.5
+更新日期：2023-02-13
+
+主页:  https://wqj520.eu.org/
+Github:  https://github.com/wqjsxy
+`
+console.log(`%c${title1} %c${title2}
+%c${content}`, styleTitle1, styleTitle2, styleContent)
