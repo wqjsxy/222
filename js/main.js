@@ -345,20 +345,20 @@ color: rgb(30,152,255);
 `
 let title1 = 'WayneのHome'
 let title2 = `
-==============================
-#   #    #   #   # #   # #####
-#   #   # #   # #  ##  # #
-# # #  #####   #   # # # #####
-## ##  #   #   #   #  ## #
-#   #  #   #   #   #   # #####
-==============================
+======================
+#   #    ###     #####
+#   #   #   #      #
+# # #   #   #      #
+## ##   # # #      #
+#   #    ### #   ##
+======================
 `
 let content = `
 版 本 号：1.2.5
 更新日期：2023-02-13
 
 主页:  https://soga.ml/
-Github:  https://github.com/Waynenet/home
+Github:  https://github.com/wqjsxy
 `
 console.log(`%c${title1} %c${title2}
 %c${content}`, styleTitle1, styleTitle2, styleContent)
