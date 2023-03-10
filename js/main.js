@@ -122,7 +122,7 @@ $('#hitokoto').click(function () {
 
 //获取天气
 //fetch('https://www.yiketianqi.com/free/day?appid=87525759&appsecret=PP6T6ikD&unescape=1')
-fetch('https://v0.yiketianqi.com/api?unescape=1&version=v62&appid=12889635&appsecret=XoqWUAo1')
+fetch('https://v0.yiketianqi.com/api?unescape=1&version=v62&appid=12889635&appsecret=XoqWUAo1&unescape=1')
 //fetch('https://devapi.qweather.com/v7/weather/now?location=101280101&key=db564b365d3c4ac38b638da0250332e7')
 //frtch('https://www.mxnzp.com/api/weather/current/广州市?app_id=xatomqtqorksppba&app_secret=TlZieWc4YnZ3UXlxV1lUc3F2NC9zQT09&unescape=1')
     .then(response => response.json())
